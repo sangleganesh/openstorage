@@ -1203,6 +1203,83 @@ service OpenStorageRole {
       };
     }
 }
+
+// OpenStorageFilesystemTrimService provides methods to manage a
+// filesystem trim operation on a volume. This operation runs in the
+// background on a mounted volume. If the volumes are not mounted, these API 
+// return error.
+//
+service OpenStorageFilesystemTrimService {
+
+  // Start a filesystem Trim background operation on a mounted volume
+  rpc Start(SdkFilesystemTrimStartRequest)
+    returns (SdkFilesystemTrimStartResponse){
+      option(google.api.http) = {
+        post: "/v1/filesystem-trim/start"
+        body: "*"
+      };
+    }
+
+  // Get Status of a filesystem Trim background operation on a mounted volume, if any
+  rpc GetStatus(SdkFilesystemTrimGetStatusRequest)
+    returns (SdkFilesystemTrimGetStatusResponse){
+      option(google.api.http) = {
+        get: "/v1/filesystem-trim/getstatus/query/{volume_id}/{mount_path}"
+      };
+    }
+
+  // Stop a filesystem Trim background operation on a mounted volume, if any
+  rpc Stop(SdkFilesystemTrimStopRequest)
+    returns (SdkFilesystemTrimStopResponse){
+      option(google.api.http) = {
+        post: "/v1/filesystem-trim/stop"
+        body: "*"
+      };
+    }
+  }
+
+// OpenStorageFilesystemCheckService service provides methods to manage a 
+// filesystem check operation on a volume. This operation is run in the 
+// background on an unmounted volume. If the volumes are mounted, then these
+// APIs return error.
+service OpenStorageFilesystemCheckService {
+
+  // Get a report of issues found on the filesystem. This operation works on an unmounted volume.
+  rpc Report(SdkFilesystemCheckReportRequest)
+    returns (SdkFilesystemCheckReportResponse){
+      option(google.api.http) = {
+        post: "/v1/filesystem-check/report"
+        body: "*"
+      };
+    }
+
+  // Fix all issues reported in the response to ReportIssues API on a filesystem. This operation works on an unmounted volume.
+  rpc Fix(SdkFilesystemCheckFixRequest)
+    returns (SdkFilesystemCheckFixResponse){
+      option(google.api.http) = {
+        post: "/v1/filesystem-check/fix"
+        body: "*"
+      };
+    }
+
+  // Get Status of a filesystem check background operation on an unmounted volume, if any
+  rpc GetStatus(SdkFilesystemCheckGetStatusRequest)
+    returns (SdkFilesystemCheckGetStatusResponse){
+      option(google.api.http) = {
+        get: "/v1/filesystem-check/getstatus/query/{volume_id}"
+      };
+    }
+
+  // Stop a filesystem check background operation on an unmounted volume, if any
+  rpc Stop(SdkFilesystemCheckStopRequest)
+    returns (SdkFilesystemCheckStopResponse){
+      option(google.api.http) = {
+        post : "/v1/filesystem-check/stop"
+        body: "*"
+      };
+    }
+  }
+
 // OpenStorageIdentity service provides methods to obtain information
 // about the cluster
 service OpenStorageIdentity {
@@ -3454,6 +3531,110 @@ message SdkRoleUpdateResponse {
   SdkRole role = 1;
 }
 
+// SdkFilesystemTrimStartRequest defines a request to start a background filesystem trim operation
+message SdkFilesystemTrimStartRequest {
+  // Id of the volume
+  string volume_id = 1;
+  // Path where the volume is mounted
+  string mount_path = 2;
+}
+
+// SdkFilesystemTrimStartResponse defines the response for a SdkFilesystemTrimStartRequest. If case of error, this response struct is not valid
+message SdkFilesystemTrimStartResponse{
+  // Id of the volume
+  string volume_id = 1;
+  // Status of the background filesystem trim Start request
+  string status = 2;
+}
+
+// SdkFilesystemTrimGetStatusRequest defines a request to get status of a background filesystem trim operation
+message SdkFilesystemTrimGetStatusRequest {
+  // Id of the volume
+  string volume_id = 1;
+  // Path where the volume is mounted
+  string mount_path = 2;
+}
+
+// SdkFilesystemTrimGetStatusResponse defines the response for a SdkFilesystemTrimGetStatusRequest. If case of error, this response struct is not valid
+message SdkFilesystemTrimGetStatusResponse{
+  // Id of the volume
+  string volume_id = 1;
+  // Status of the background filesystem trim GetStatus request
+  string status = 2;
+}
+
+// SdkFilesystemTrimStopRequest defines a request to stop a background filesystem trim operation
+message SdkFilesystemTrimStopRequest {
+  // Id of the volume
+  string volume_id = 1;
+  // Path where the volume is mounted
+  string mount_path = 2;
+}
+
+// SdkFilesystemTrimStopResponse defines the response for a SdkFilesystemTrimStopRequest. If case of error, this response struct is not valid
+message SdkFilesystemTrimStopResponse{
+  // Id of the volume
+  string volume_id = 1;
+  // Status of the background filesystem trim Stop request
+  string status = 2;
+}
+
+// SdkFilesystemCheckReportRequest defines a request to report the filesystem consistency issues
+message SdkFilesystemCheckReportRequest {
+  // Id of the volume
+  string volume_id = 1;
+}
+
+// SdkFilesystemCheckReportResponse defines the response for a SdkFilesystemCheckReportRequest. If case of error, this response struct is not valid
+message SdkFilesystemCheckReportResponse{
+  // Id of the volume
+  string volume_id = 1;
+  // Status of the background filesystem check Report request
+  string status = 2;
+}
+
+// SdkFilesystemCheckFixRequest defines a request to fix all the filesystem consistency issues reported in the response to OpenStorageFilesystemCheckService.Report() request.
+message SdkFilesystemCheckFixRequest {
+  // Id of the volume
+  string volume_id = 1;
+}
+
+// SdkFilesystemCheckFixResponse defines the response for a SdkFilesystemCheckFixRequest. If case of error, this response struct is not valid
+message SdkFilesystemCheckFixResponse{
+  // Id of the volume
+  string volume_id = 1;
+  // Status of the background filesystem check Fix request
+  string status = 2;
+}
+
+// SdkFilesystemCheckGetStatusRequest defines a request to get status of a background filesystem check operation
+message SdkFilesystemCheckGetStatusRequest {
+  // Id of the volume
+  string volume_id = 1;
+}
+
+// SdkFilesystemCheckGetStatusResponse defines the response for a SdkFilesystemCheckGetStatusRequest. If case of error, this response struct is not valid
+message SdkFilesystemCheckGetStatusResponse{
+  // Id of the volume
+  string volume_id = 1;
+  // Status of the background filesystem check GetStatus request
+  string status = 2;
+}
+
+// SdkFilesystemCheckStopRequest defines a request to stop a background filesystem check operation
+message SdkFilesystemCheckStopRequest {
+  // Id of the volume
+  string volume_id = 1;
+}
+
+// SdkFilesystemCheckStopResponse defines the response for a SdkFilesystemCheckStopRequest. If case of error, this response struct is not valid
+message SdkFilesystemCheckStopResponse{
+  // Id of the volume
+  string volume_id = 1;
+  // Status of the background filesystem check Stop request
+  string status = 2;
+}
+
 // Empty request
 message SdkIdentityCapabilitiesRequest {
 }
@@ -3540,7 +3721,7 @@ message SdkVersion {
     // SDK version major value of this specification
     Major = 0;
     // SDK version minor value of this specification
-    Minor = 67;
+    Minor = 69;
     // SDK version patch value of this specification
     Patch = 0;
   }
